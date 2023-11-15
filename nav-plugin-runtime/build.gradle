@@ -1,0 +1,30 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'maven-publish'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+publishing{
+    publications{
+        mavenJava(MavenPublication){
+            from(components["java"])
+            groupId = "com.niu.jetpack"
+            artifactId = "nav-plugin-runtime"
+            version = "1.0.1"
+        }
+    }
+//    repositories {
+//        maven{
+//            url: 'https://xxx/xxx/xx/'
+//            credentials {
+//                username "614e9ad288a57fe41ed33148"
+//                password "KJ]p--iLuvXB"
+//            }
+//        }
+//    }
+}

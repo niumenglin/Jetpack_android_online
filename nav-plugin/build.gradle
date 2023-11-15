@@ -1,0 +1,38 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'com.gradle.plugin-publish'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation androidxLibs.bundles.nav.plugin
+    implementation 'com.niu.jetpack:nav-plugin-runtime:1.0.1'
+}
+
+version = "1.0.1"
+//group第三位 github用户名
+group = "io.github.niumenglin"
+gradlePlugin {
+    //可访问的，github地址
+    website = 'https://github.com/niumenglin'
+    //文档链接，可访问的文件地址
+    vcsUrl = 'https://github.com/niumenglin/nav-plugin/bolb/main/README.md'
+    plugins {
+        create('navPlugin'){
+            //id指定插件名称
+            id = 'io.github.niumenglin.nav-plugin'
+            //插件发布后在网站上显示的名称
+            displayName = 'nav-plugin'
+            //插件加载时，找的文件入口名
+            implementationClass = 'com.niu.jetpack.plugin.NavPlugin'
+            description = 'android jetpack navigation gradle'
+            tags.set(['navigation','transform','gradle7'])
+        }
+    }
+}

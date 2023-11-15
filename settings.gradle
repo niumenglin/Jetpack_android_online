@@ -1,0 +1,68 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        maven {
+            allowInsecureProtocol true
+            url 'http://dl.bintray.com/umsdk/release'
+        }
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+//Gradle8 默认开启version_catalogs
+//enableFeaturePreview('VERSION_CATALOGS')
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/releases' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        google()
+        mavenCentral()
+    }
+    versionCatalogs {
+        create('androidxLibs'){
+            //别名、group、artifact、version
+            //androidx.core:core-ktx:1.9.0
+            library('core-ktx','androidx.core','core-ktx').version('1.9.0')
+            //androidx.appcompat:appcompat:1.6.1
+            library('appcompat','androidx.appcompat','appcompat').version('1.6.1')
+
+            //navigation
+            library('navigation-fragment','androidx.navigation','navigation-fragment-ktx').version('2.5.3')
+            library('navigation-ui','androidx.navigation','navigation-ui-ktx').version('2.5.3')
+
+            bundle('androidx',['core-ktx','appcompat','navigation-fragment','navigation-ui'])
+
+            //nav-plugin
+            library('asm','org.ow2.asm','asm').version('9.2')
+            library('asm-tree','org.ow2.asm','asm-tree').version('9.2')
+            library('commons-io','commons-io','commons-io').version('2.6')
+            library('kotlinpoet','com.squareup','kotlinpoet').version('1.2.0')
+            library('agp','com.android.tools.build','gradle').version('7.4.1')
+            bundle('nav-plugin',['asm','asm-tree','commons-io','kotlinpoet','agp'])
+
+            //fastjson
+            library('fastjson','com.alibaba','fastjson').version('1.2.59')
+        }
+        create('googleLibs'){
+            //com.google.android.material:material:1.8.0
+            library('material','com.google.android.material','material').version('1.8.0')
+        }
+        create('buildsdk'){
+            version('compilesdk','33')
+            version('minsdk','24')
+            version('targetsdk','33')
+        }
+    }
+}
+
+rootProject.name = "Jetpack_android_online"
+include ':app'
+include ':nav-plugin'
+include ':nav-plugin-runtime'

@@ -1,0 +1,57 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'io.github.niumenglin.nav-plugin'
+}
+
+android {
+    namespace 'com.niu.jetpack_android_online'
+    compileSdk buildsdk.versions.compilesdk.get().toInteger()
+
+    defaultConfig {
+        applicationId "com.niu.jetpack_android_online"
+        minSdk buildsdk.versions.minsdk.get().toInteger()
+        targetSdk buildsdk.versions.targetsdk.get().toInteger()
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    viewBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+
+//    implementation 'androidx.core:core-ktx:1.9.0'
+//    implementation 'androidx.appcompat:appcompat:1.6.1'
+//    implementation 'com.google.android.material:material:1.8.0'
+
+//    implementation androidxLibs.core.ktx
+//    implementation androidxLibs.appcompat
+    implementation androidxLibs.bundles.androidx
+    implementation androidxLibs.fastjson
+
+//    implementation googleLibs.material
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    implementation(project(path:':nav-plugin-runtime'))
+}
