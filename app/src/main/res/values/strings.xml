@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Jetpack_android_online</string>
+    <string name="loading_status_empty_no_data">虽然什么也没有，要不下拉刷新试试</string>
+    <string name="loading_status_empty_action">朕知道了</string>
 </resources>
