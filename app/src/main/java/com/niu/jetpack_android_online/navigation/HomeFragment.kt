@@ -3,6 +3,7 @@ package com.niu.jetpack_android_online.navigation
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
@@ -10,6 +11,10 @@ import com.niu.jetpack.plugin.runtime.NavDestination
 import com.niu.jetpack_android_online.R
 import com.niu.jetpack_android_online.base.BaseFragment
 import com.niu.jetpack_android_online.databinding.LayoutFragmentHomeBinding
+import com.niu.jetpack_android_online.http.ApiService
+import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
+import kotlin.coroutines.suspendCoroutine
 
 @NavDestination(type = NavDestination.NavType.Fragment, route = "home_fragment", asStarter = true)
 class HomeFragment : BaseFragment<LayoutFragmentHomeBinding>() {
@@ -26,6 +31,13 @@ class HomeFragment : BaseFragment<LayoutFragmentHomeBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        lifecycleScope.launch {
+            val apiResult = ApiService.getService().getFeeds()
+            println("1111")
+            apiResult
+        }
+
         val navController = findNavController()
         binding.navigateToCategoryFragment.setOnClickListener {
             //对于fragment类型的路由节点，在 navigate 跳转的时候 使用的fragmentTransaction的replace()方法

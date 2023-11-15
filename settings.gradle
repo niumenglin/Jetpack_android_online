@@ -37,7 +37,24 @@ dependencyResolutionManagement {
             library('navigation-fragment','androidx.navigation','navigation-fragment-ktx').version('2.5.3')
             library('navigation-ui','androidx.navigation','navigation-ui-ktx').version('2.5.3')
 
-            bundle('androidx',['core-ktx','appcompat','navigation-fragment','navigation-ui'])
+            //paging3
+            library('ktx-stdlib-common','org.jetbrains.kotlin','kotlin-stdlib-common').version('1.8.0')
+            library('paging-runtime', 'androidx.paging', 'paging-runtime').version('3.1.1')
+
+            bundle('androidx',['core-ktx','appcompat','navigation-fragment','navigation-ui','ktx-stdlib-common','paging-runtime'])
+
+
+            //retrofit+okhttp3 =网络库依赖
+            library('glide','com.github.bumptech.glide','glide').version('4.15.0')
+            library('glide-compiler','com.github.bumptech.glide','compiler').version('4.15.0')
+            library('glide-transformations','jp.wasabeef','glide-transformations').version('4.0.0')
+
+            library('retrofit', 'com.squareup.retrofit2', 'retrofit').version('2.9.0')
+            library('converter-gson', 'com.squareup.retrofit2', 'converter-gson').version('2.9.0')
+            library('okhttp', 'com.squareup.okhttp3', 'okhttp').version('4.9.1')
+            library('logging', 'com.squareup.okhttp3', 'logging-interceptor').version('4.9.1')
+            bundle('http', ['retrofit', 'converter-gson', 'okhttp', 'logging','glide','glide-transformations'])
+
 
             //nav-plugin
             library('asm','org.ow2.asm','asm').version('9.2')
