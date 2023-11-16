@@ -10,7 +10,8 @@ object AppGlobals {
         if (sApplication == null) {
             kotlin.runCatching {
                 //className:全类名
-                Class.forName("android.app.ActivityThread").getMethod("currentApplication")
+                sApplication = Class.forName("android.app.ActivityThread")
+                    .getMethod("currentApplication")
                     .invoke(null, *emptyArray()) as Application
             }.onFailure {
                 it.printStackTrace()

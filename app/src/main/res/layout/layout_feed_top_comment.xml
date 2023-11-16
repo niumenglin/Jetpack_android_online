@@ -55,7 +55,7 @@
                 android:id="@+id/comment_like_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
                 android:textColor="@color/color_theme"
                 android:textSize="@dimen/sp_12"
                 android:textStyle="bold"
@@ -86,6 +86,7 @@
             tools:text="comment_text" />
 
         <FrameLayout
+            android:id="@+id/media_layout"
             android:layout_width="@dimen/dp_80"
             android:layout_height="@dimen/dp_80"
             android:layout_marginTop="@dimen/dp_10"

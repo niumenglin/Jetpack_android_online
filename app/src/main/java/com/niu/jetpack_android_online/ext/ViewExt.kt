@@ -1,16 +1,35 @@
 package com.niu.jetpack_android_online.ext
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
+import androidx.annotation.DrawableRes
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.target.BitmapImageViewTarget
+import com.bumptech.glide.request.transition.Transition
+import com.google.android.material.button.MaterialButton
 import com.niu.jetpack_android_online.utils.PixUtil
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
 fun View.setVisibility(condition: Boolean) {
     this.visibility = if (condition) View.VISIBLE else View.GONE
+}
+
+fun TextView.setTextVisibility(content: String?, goneWhenNull: Boolean = true) {
+    if (TextUtils.isEmpty(content) && goneWhenNull) {
+        visibility = View.GONE
+        return
+    }
+    visibility = View.VISIBLE
+    text = content
+}
+
+fun ImageView.setImageResource(condition: Boolean, trueRes: Int, falseRes: Int) {
+    setImageResource(if (condition) trueRes else falseRes)
 }
 
 @SuppressLint("CheckResult")
@@ -31,4 +50,17 @@ fun ImageView.setImageUrl(imageUrl: String?, isCircle: Boolean = false, radius: 
         builder.override(layoutParams.width, layoutParams.height)
     }
     builder.into(this)
+}
+
+fun ImageView.load(imageUrl: String, callback: (Bitmap) -> Unit) {
+    Glide.with(this).asBitmap().load(imageUrl).into(object : BitmapImageViewTarget(this) {
+        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+            super.onResourceReady(resource, transition)
+            callback(resource)
+        }
+    })
+}
+
+fun MaterialButton.setIconResource(condition: Boolean, trueRes: Int, falseRes: Int) {
+    setIconResource(if (condition) trueRes else falseRes)
 }

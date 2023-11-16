@@ -23,7 +23,9 @@ data class Feed(
     val ugc: Ugc?,
     val url: String?,
     val width: Int
-)
+) {
+    var backgroundColor: Int = 0
+}
 
 @Keep
 data class Author(
@@ -49,10 +51,12 @@ data class Author(
 data class TopComment(
     val author: Author?,
     val commentId: Long,
-    val commentText: String,
+    val commentText: String,//评论的正文
+    val commentCount: Int,//评论数
     val commentType: Int,
     val commentUgc: Ugc?,
     val createTime: Long,
+    val hasLiked: Boolean,
     val height: Int,
     val id: Int,
     val imageUrl: String?,

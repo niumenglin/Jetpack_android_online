@@ -16,12 +16,13 @@
         android:backgroundTint="@color/white"
         android:padding="@dimen/dp_0"
         android:stateListAnimator="@null"
-        android:textColor="@color/color_theme"
+        android:text="@string/abs_list_interaction_like_text"
+        android:textColor="@color/color_3d3"
         android:textSize="@dimen/sp_14"
         app:icon="@drawable/icon_cell_like"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/dp_4"
-        app:iconTint="@color/color_theme"
+        app:iconTint="@color/color_3d3"
         tools:text="10000" />
 
     <com.google.android.material.button.MaterialButton
@@ -32,12 +33,13 @@
         android:backgroundTint="@color/white"
         android:padding="@dimen/dp_0"
         android:stateListAnimator="@null"
-        android:textColor="@color/color_theme"
+        android:text="@string/abs_list_interaction_diss_text"
+        android:textColor="@color/color_3d3"
         android:textSize="@dimen/sp_14"
         app:icon="@drawable/icon_cell_diss"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/dp_4"
-        app:iconTint="@color/color_theme"
+        app:iconTint="@color/color_3d3"
         tools:text="10000" />
 
     <com.google.android.material.button.MaterialButton
@@ -48,6 +50,7 @@
         android:backgroundTint="@color/white"
         android:padding="@dimen/dp_0"
         android:stateListAnimator="@null"
+        android:text="@string/abs_list_interaction_comment_text"
         android:textColor="@color/color_3d3"
         android:textSize="@dimen/sp_14"
         app:icon="@drawable/icon_cell_comment"
@@ -64,6 +67,7 @@
         android:backgroundTint="@color/white"
         android:padding="@dimen/dp_0"
         android:stateListAnimator="@null"
+        android:text="@string/abs_list_interaction_share_text"
         android:textColor="@color/color_3d3"
         android:textSize="@dimen/sp_14"
         app:icon="@drawable/icon_cell_share"
