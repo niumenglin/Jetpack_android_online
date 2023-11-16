@@ -26,7 +26,7 @@
         layout="@layout/layout_feed_label" />
 
     <include
-        android:id="@+id/feed_comment"
+        android:id="@+id/feed_top_comment"
         layout="@layout/layout_feed_top_comment" />
 
     <include

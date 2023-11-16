@@ -6,9 +6,13 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_feed_author" />
+    <include
+        android:id="@+id/feed_author"
+        layout="@layout/layout_feed_author" />
 
-    <include layout="@layout/layout_feed_text" />
+    <include
+        android:id="@+id/feed_text"
+        layout="@layout/layout_feed_text" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/feed_image"
@@ -19,10 +23,16 @@
         tools:src="@mipmap/ic_launcher_round"
         tools:visibility="visible" />
 
-    <include layout="@layout/layout_feed_label" />
+    <include
+        android:id="@+id/feed_label"
+        layout="@layout/layout_feed_label" />
 
-    <include layout="@layout/layout_feed_top_comment" />
+    <include
+        android:id="@+id/feed_top_comment"
+        layout="@layout/layout_feed_top_comment" />
 
-    <include layout="@layout/layout_feed_interaction" />
+    <include
+        android:id="@+id/feed_interaction"
+        layout="@layout/layout_feed_interaction" />
 
 </LinearLayout>
