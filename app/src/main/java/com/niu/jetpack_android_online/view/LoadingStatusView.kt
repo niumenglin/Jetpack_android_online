@@ -25,7 +25,7 @@ class LoadingStatusView @JvmOverloads constructor(
     }
 
     @SuppressLint("ResourceType")
-    fun showEmpty(@DrawableRes iconRes: Int, text: String, retry: OnClickListener?) {
+    fun showEmpty(@DrawableRes iconRes: Int=0, text: String?=null, retry: OnClickListener?) {
         binding.loading.hide()
         binding.emptyLayout.visibility = View.VISIBLE
         if (iconRes > 0) {
@@ -35,9 +35,9 @@ class LoadingStatusView @JvmOverloads constructor(
             binding.emptyText.text = text
             binding.emptyText.visibility = View.VISIBLE
         }
-        retry?.run {
+        retry?.let {
             binding.emptyAction.visibility = View.VISIBLE
-            binding.emptyAction.setOnClickListener(this)
+            binding.emptyAction.setOnClickListener(it)
         }
     }
 

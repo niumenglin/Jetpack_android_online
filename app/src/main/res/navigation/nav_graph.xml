@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/home_fragment"
-        android:name="com.niu.jetpack_android_online.navigation.HomeFragment">
+        android:name="com.niu.jetpack_android_online.pages.home.HomeFragment">
         <action
             android:id="@+id/navigate_to_category_fragment"
             app:destination="@+id/category_fragment" />

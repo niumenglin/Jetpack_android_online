@@ -15,8 +15,8 @@ object NavRegistry {
     init {
         navList.add(NavData("tags_fragment","com.niu.jetpack_android_online.navigation.TagsFragment",false,Fragment))
                 navList.add(NavData("category_fragment","com.niu.jetpack_android_online.navigation.CategoryFragment",false,Fragment))
-                navList.add(NavData("home_fragment","com.niu.jetpack_android_online.navigation.HomeFragment",true,Fragment))
                 navList.add(NavData("user_fragment","com.niu.jetpack_android_online.navigation.UserFragment",false,Fragment))
+                navList.add(NavData("home_fragment","com.niu.jetpack_android_online.pages.home.HomeFragment",true,Fragment))
 
     }
 

@@ -28,6 +28,9 @@ dependencyResolutionManagement {
     versionCatalogs {
         create('androidxLibs'){
             //别名、group、artifact、version
+            library('swiperefreshlayout','androidx.swiperefreshlayout','swiperefreshlayout').version('1.2.0-alpha01')
+            //调色板
+            library('palette','androidx.palette','palette').version('1.0.0')
             //androidx.core:core-ktx:1.9.0
             library('core-ktx','androidx.core','core-ktx').version('1.9.0')
             //androidx.appcompat:appcompat:1.6.1
@@ -41,7 +44,7 @@ dependencyResolutionManagement {
             library('ktx-stdlib-common','org.jetbrains.kotlin','kotlin-stdlib-common').version('1.8.0')
             library('paging-runtime', 'androidx.paging', 'paging-runtime').version('3.1.1')
 
-            bundle('androidx',['core-ktx','appcompat','navigation-fragment','navigation-ui','ktx-stdlib-common','paging-runtime'])
+            bundle('androidx',['swiperefreshlayout','palette','core-ktx','appcompat','navigation-fragment','navigation-ui','ktx-stdlib-common','paging-runtime'])
 
 
             //retrofit+okhttp3 =网络库依赖
