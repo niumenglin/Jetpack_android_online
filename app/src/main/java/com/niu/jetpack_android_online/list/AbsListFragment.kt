@@ -44,7 +44,7 @@ open class AbsListFragment : Fragment(R.layout.layout_abs_list_fragment) {
                 LinearLayoutManager.VERTICAL
             )
         )
-        feedAdapter = FeedAdapter(lifecycle)
+        feedAdapter = FeedAdapter(getFeedType(), lifecycleOwner = viewLifecycleOwner)
         val contactAdapter = feedAdapter.withLoadStateFooter(FooterLoadStateAdapter())
         viewBinding.listView.adapter = contactAdapter
         viewBinding.listView.layoutManager =
@@ -65,7 +65,7 @@ open class AbsListFragment : Fragment(R.layout.layout_abs_list_fragment) {
                 viewBinding.refreshLayout.isRefreshing = false
                 viewBinding.listView.setVisibility(hasData)
                 viewBinding.loadingStatus.setVisibility(!hasData)
-                if (!hasData){
+                if (!hasData) {
                     viewBinding.loadingStatus.showEmpty {
                         //点击重试按钮
                         feedAdapter.retry()
@@ -73,6 +73,10 @@ open class AbsListFragment : Fragment(R.layout.layout_abs_list_fragment) {
                 }
             }
         }
+    }
+
+    private fun getFeedType(): String {
+        return "all"
     }
 
     fun submitData(pagingData: PagingData<Feed>) {

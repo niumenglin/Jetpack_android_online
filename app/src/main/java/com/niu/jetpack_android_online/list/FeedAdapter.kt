@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.coroutineScope
 import androidx.paging.PagingDataAdapter
 import androidx.palette.graphics.Palette
@@ -21,6 +21,7 @@ import com.niu.jetpack_android_online.databinding.LayoutFeedInteractionBinding
 import com.niu.jetpack_android_online.databinding.LayoutFeedLabelBinding
 import com.niu.jetpack_android_online.databinding.LayoutFeedTextBinding
 import com.niu.jetpack_android_online.databinding.LayoutFeedTopCommentBinding
+import com.niu.jetpack_android_online.exoplayer.PagePlayDetector
 import com.niu.jetpack_android_online.exoplayer.WrapperPlayerView
 import com.niu.jetpack_android_online.ext.load
 import com.niu.jetpack_android_online.ext.setIconResource
@@ -39,7 +40,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FeedAdapter constructor(private val lifecycle: Lifecycle) :
+class FeedAdapter constructor(
+    private val pageName: String,
+    private val lifecycleOwner: LifecycleOwner
+) :
     PagingDataAdapter<Feed, FeedAdapter.FeedViewHolder>(object : DiffUtil.ItemCallback<Feed>() {
         override fun areItemsTheSame(oldItem: Feed, newItem: Feed): Boolean {
             return oldItem.itemId == newItem.itemId
@@ -49,6 +53,8 @@ class FeedAdapter constructor(private val lifecycle: Lifecycle) :
             return oldItem == newItem
         }
     }) {
+
+    private lateinit var playDetector: PagePlayDetector
 
     override fun getItemViewType(position: Int): Int {
         val feedItem = getItem(position) ?: return 0
@@ -94,7 +100,8 @@ class FeedAdapter constructor(private val lifecycle: Lifecycle) :
         )
     }
 
-    inner class FeedViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class FeedViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+        PagePlayDetector.IPlayDetector {
         private val authorBinding =
             LayoutFeedAuthorBinding.bind(itemView.findViewById(R.id.feed_author))
         private val feedTextBinding =
@@ -139,14 +146,14 @@ class FeedAdapter constructor(private val lifecycle: Lifecycle) :
                 }
                 if (feedItem.backgroundColor == 0) {
                     //lifecycle 启动协程，lifecycle所在页面销毁后，协程也相应地自动销毁，不会造成内存泄露！！！
-                    lifecycle.coroutineScope.launch(Dispatchers.IO) {
+                    lifecycleOwner.lifecycle.coroutineScope.launch(Dispatchers.IO) {
                         //Dispatchers.IO：generate()耗时操作 需要在子线程中执行
                         val defaultColor = feedImage.context.getColor(R.color.color_theme_10)
                         val color = Palette.Builder(it).generate().getMutedColor(defaultColor)
                         feedItem.backgroundColor = color
 
                         //启动协程，将lifecycle的协程上下文传递进去，切换到主线程。
-                        withContext(lifecycle.coroutineScope.coroutineContext) {
+                        withContext(lifecycleOwner.lifecycle.coroutineScope.coroutineContext) {
                             feedImage.background = ColorDrawable(feedItem.backgroundColor)
                         }
                     }
@@ -232,10 +239,40 @@ class FeedAdapter constructor(private val lifecycle: Lifecycle) :
                 playerView?.run {
                     setVisibility(true)
                     //widthPx: Int, heightPx: Int, coverUrl: String?, videoUrl: String, maxHeight: Int
-                    bindData(width,height,cover,url,maxHeight)
+                    bindData(width, height, cover, url, maxHeight)
                 }
             }
         }
 
+        override fun getAttachView(): WrapperPlayerView {
+            return playerView!!
+        }
+
+        override fun getVideoUrl(): String {
+            return getItem(layoutPosition)?.url!!
+        }
+
+        fun isVideo(): Boolean {
+            return getItem(layoutPosition)?.itemType == TYPE_VIDEO
+        }
+
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        playDetector = PagePlayDetector(pageName, lifecycleOwner, recyclerView)
+
+    }
+
+    override fun onViewAttachedToWindow(holder: FeedViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        if (holder.isVideo()) {
+            playDetector.addDetector(holder)
+        }
+    }
+
+    override fun onViewDetachedFromWindow(holder: FeedViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        playDetector.removeDetector(holder)
     }
 }
