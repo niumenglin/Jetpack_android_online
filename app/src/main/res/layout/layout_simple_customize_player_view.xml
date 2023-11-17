@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--AspectRatioFrameLayout，具备宽高自适应缩放的ViewGroup-->
+    <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+        android:id="@id/exo_content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+
+      <!--video surface will be insert as the first child of the viewGroup-->
+    </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
+
+
+</merge>

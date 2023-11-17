@@ -58,6 +58,10 @@ dependencyResolutionManagement {
             library('logging', 'com.squareup.okhttp3', 'logging-interceptor').version('4.9.1')
             bundle('http', ['retrofit', 'converter-gson', 'okhttp', 'logging','glide','glide-transformations'])
 
+            //exoplayer
+            library('exoplayer-core', 'com.google.android.exoplayer', 'exoplayer-core').version('2.18.5')
+            library('exoplayer-ui', 'com.google.android.exoplayer', 'exoplayer-ui').version('2.18.5')
+            bundle('exoplayer', ['exoplayer-core', 'exoplayer-ui'])
 
             //nav-plugin
             library('asm','org.ow2.asm','asm').version('9.2')
