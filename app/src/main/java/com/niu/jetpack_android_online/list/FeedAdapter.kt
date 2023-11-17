@@ -21,6 +21,7 @@ import com.niu.jetpack_android_online.databinding.LayoutFeedInteractionBinding
 import com.niu.jetpack_android_online.databinding.LayoutFeedLabelBinding
 import com.niu.jetpack_android_online.databinding.LayoutFeedTextBinding
 import com.niu.jetpack_android_online.databinding.LayoutFeedTopCommentBinding
+import com.niu.jetpack_android_online.exoplayer.WrapperPlayerView
 import com.niu.jetpack_android_online.ext.load
 import com.niu.jetpack_android_online.ext.setIconResource
 import com.niu.jetpack_android_online.ext.setImageResource
@@ -58,7 +59,23 @@ class FeedAdapter constructor(private val lifecycle: Lifecycle) :
         val feedItem = getItem(position) ?: return
         holder.bindAuthor(feedItem.author)
         holder.bindFeedContent(feedItem.feedsText)
-        holder.bindFeedImage(feedItem.width, feedItem.height, PixUtil.dp2px(300), feedItem.cover)
+        if (feedItem.itemType != TYPE_VIDEO) {//图文类型
+            holder.bindFeedImage(
+                feedItem.width,
+                feedItem.height,
+                PixUtil.dp2px(300),
+                feedItem.cover
+            )
+        } else {
+            holder.bindVideoData(
+                feedItem.width,
+                feedItem.height,
+                PixUtil.dp2px(300),
+                feedItem.cover,
+                feedItem.url
+            )
+        }
+
         holder.bindLabel(feedItem.activityText)
         holder.bindTopComment(feedItem.topComment)
         holder.bindInteraction(feedItem.ugc)
@@ -73,7 +90,7 @@ class FeedAdapter constructor(private val lifecycle: Lifecycle) :
         val layoutResId =
             if (viewType == TYPE_IMAGE_TEXT) R.layout.layout_feed_type_image else R.layout.layout_feed_type_video
         return FeedViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.layout_feed_type_image, parent, false)
+            LayoutInflater.from(parent.context).inflate(layoutResId, parent, false)
         )
     }
 
@@ -90,6 +107,7 @@ class FeedAdapter constructor(private val lifecycle: Lifecycle) :
             LayoutFeedTopCommentBinding.bind(itemView.findViewById(R.id.feed_top_comment))
         private val feedInteractionBinding =
             LayoutFeedInteractionBinding.bind(itemView.findViewById(R.id.feed_interaction))
+        private val playerView: WrapperPlayerView? = itemView.findViewById(R.id.feed_video)
 
         fun bindAuthor(author: Author?) {
             author?.run {
@@ -128,7 +146,7 @@ class FeedAdapter constructor(private val lifecycle: Lifecycle) :
                         feedItem.backgroundColor = color
 
                         //启动协程，将lifecycle的协程上下文传递进去，切换到主线程。
-                        withContext(lifecycle.coroutineScope.coroutineContext){
+                        withContext(lifecycle.coroutineScope.coroutineContext) {
                             feedImage.background = ColorDrawable(feedItem.backgroundColor)
                         }
                     }
@@ -166,7 +184,7 @@ class FeedAdapter constructor(private val lifecycle: Lifecycle) :
             feedTopCommentBinding.mediaLayout.setVisibility(topComment?.imageUrl != null)
             topComment?.run {
                 feedTopCommentBinding.commentAuthor.setTextVisibility(author?.name)
-                feedTopCommentBinding.commentAvatar.setImageUrl(author?.avatar,true)
+                feedTopCommentBinding.commentAvatar.setImageUrl(author?.avatar, true)
                 feedTopCommentBinding.commentText.setTextVisibility(commentText)
                 feedTopCommentBinding.commentLikeCount.setTextVisibility(commentCount.toString())
                 feedTopCommentBinding.commentPreviewVideoPlay.setVisibility(videoUrl != null)
@@ -188,7 +206,8 @@ class FeedAdapter constructor(private val lifecycle: Lifecycle) :
                     R.drawable.icon_cell_like
                 )
 
-                val likeStateColor = ColorStateList.valueOf(context.getColor(if (hasLiked) R.color.color_theme_10 else R.color.color_3d3))
+                val likeStateColor =
+                    ColorStateList.valueOf(context.getColor(if (hasLiked) R.color.color_theme_10 else R.color.color_3d3))
                 feedInteractionBinding.interactionLike.iconTint = likeStateColor
                 feedInteractionBinding.interactionLike.setTextColor(likeStateColor)
 
@@ -198,12 +217,23 @@ class FeedAdapter constructor(private val lifecycle: Lifecycle) :
                     R.drawable.icon_cell_diss
                 )
 
-                val dissStateColor = ColorStateList.valueOf(context.getColor(if (hasdiss) R.color.color_theme_10 else R.color.color_3d3))
+                val dissStateColor =
+                    ColorStateList.valueOf(context.getColor(if (hasdiss) R.color.color_theme_10 else R.color.color_3d3))
                 feedInteractionBinding.interactionDiss.iconTint = dissStateColor
                 feedInteractionBinding.interactionDiss.setTextColor(dissStateColor)
 
                 feedInteractionBinding.interactionComment.text = commentCount.toString()
                 feedInteractionBinding.interactionShare.text = shareCount.toString()
+            }
+        }
+
+        fun bindVideoData(width: Int, height: Int, maxHeight: Int, cover: String?, url: String?) {
+            url?.run {
+                playerView?.run {
+                    setVisibility(true)
+                    //widthPx: Int, heightPx: Int, coverUrl: String?, videoUrl: String, maxHeight: Int
+                    bindData(width,height,cover,url,maxHeight)
+                }
             }
         }
 
