@@ -10,6 +10,7 @@ class App : Application(){
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
         const val TOKEN = "DYGaPoizeOjASILY"//彩云天气token
+        const val TENCENT_APP_ID = "102075085" //tencent AppId
     }
 
     override fun onCreate() {

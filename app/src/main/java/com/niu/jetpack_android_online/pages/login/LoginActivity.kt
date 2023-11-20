@@ -3,6 +3,7 @@ package com.niu.jetpack_android_online.pages.login
 import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
+import com.niu.jetpack_android_online.App
 import com.niu.jetpack_android_online.base.BaseActivity
 import com.niu.jetpack_android_online.databinding.ActivityLayoutLoginBinding
 import com.niu.jetpack_android_online.http.ApiService
@@ -27,7 +28,7 @@ class LoginActivity : BaseActivity<ActivityLayoutLoginBinding>() {
         binding.actionClose.setOnClickListener { finish() }
         binding.actionLogin.setOnClickListener { login() }
 
-        tencent = Tencent.createInstance("102075085", applicationContext)
+        tencent = Tencent.createInstance(App.TENCENT_APP_ID, applicationContext)
     }
 
     private fun login() {
