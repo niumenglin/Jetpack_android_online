@@ -66,6 +66,14 @@ dependencyResolutionManagement {
             //qq_open_sdk
             library('qqopensdk', 'com.tencent.tauth', 'qqopensdk').version('3.52.0')
 
+            //room
+            def room_version = '2.5.0'
+            library('room-runtime','androidx.room','room-runtime').version(room_version)
+            library('room-ktx','androidx.room','room-ktx').version(room_version)
+            library('room-compiler','androidx.room','room-compiler').version(room_version)
+            bundle('room', ['room-runtime', 'room-ktx'])
+
+
             //nav-plugin
             library('asm','org.ow2.asm','asm').version('9.2')
             library('asm-tree','org.ow2.asm','asm-tree').version('9.2')

@@ -1,6 +1,9 @@
 package com.niu.jetpack_android_online.model
 
 import androidx.annotation.Keep
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 const val TYPE_TEXT = 0 //文本类型帖子
 const val TYPE_IMAGE_TEXT = 1 //图文类型帖子
@@ -28,11 +31,12 @@ data class Feed(
     var backgroundColor: Int = 0
 }
 
+@Entity(tableName = "author")
 @Keep
 data class Author(
     val avatar: String,
     val commentCount: Int,
-    val description: String,
+    val description: String?,
     val expiresTime: Int,
     val favoriteCount: Int,
     val feedCount: Int,
@@ -44,7 +48,9 @@ data class Author(
     val name: String,
     val qqOpenId: String,
     val score: Int,
+    @ColumnInfo(name = "topCount", defaultValue = "0")
     val topCount: Int,
+    @PrimaryKey(autoGenerate = false)
     val userId: Long
 )
 
