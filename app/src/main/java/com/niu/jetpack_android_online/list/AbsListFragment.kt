@@ -75,8 +75,8 @@ open class AbsListFragment : Fragment(R.layout.layout_abs_list_fragment) {
         }
     }
 
-    private fun getFeedType(): String {
-        return "all"
+    fun getFeedType(): String {
+        return arguments?.getString(FEED_TYPE) ?: "all"
     }
 
     fun submitData(pagingData: PagingData<Feed>) {
@@ -84,5 +84,9 @@ open class AbsListFragment : Fragment(R.layout.layout_abs_list_fragment) {
         lifecycleScope.launch {
             feedAdapter.submitData(pagingData)
         }
+    }
+
+    companion object {
+        const val FEED_TYPE = "feedType"
     }
 }

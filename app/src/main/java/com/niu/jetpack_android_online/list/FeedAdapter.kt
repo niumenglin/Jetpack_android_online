@@ -32,6 +32,7 @@ import com.niu.jetpack_android_online.ext.setVisibility
 import com.niu.jetpack_android_online.model.Author
 import com.niu.jetpack_android_online.model.Feed
 import com.niu.jetpack_android_online.model.TYPE_IMAGE_TEXT
+import com.niu.jetpack_android_online.model.TYPE_TEXT
 import com.niu.jetpack_android_online.model.TYPE_VIDEO
 import com.niu.jetpack_android_online.model.TopComment
 import com.niu.jetpack_android_online.model.Ugc
@@ -88,13 +89,13 @@ class FeedAdapter constructor(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
-        if (viewType != TYPE_IMAGE_TEXT && viewType != TYPE_VIDEO) {
+        if (viewType != TYPE_TEXT && viewType != TYPE_IMAGE_TEXT && viewType != TYPE_VIDEO) {
             val view = View(parent.context)
             view.visibility = View.GONE
             return FeedViewHolder(view)
         }
         val layoutResId =
-            if (viewType == TYPE_IMAGE_TEXT) R.layout.layout_feed_type_image else R.layout.layout_feed_type_video
+            if (viewType == TYPE_IMAGE_TEXT||viewType == TYPE_TEXT) R.layout.layout_feed_type_image else R.layout.layout_feed_type_video
         return FeedViewHolder(
             LayoutInflater.from(parent.context).inflate(layoutResId, parent, false)
         )
