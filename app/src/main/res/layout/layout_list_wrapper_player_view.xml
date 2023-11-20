@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
+        android:scaleType="fitXY"
         tools:background="@color/color_theme_10"
         tools:ignore="ContentDescription" />
 
@@ -31,7 +32,7 @@
 
     <!--缓冲进度条,默认隐藏-->
     <ProgressBar
-        android:id="@+id/butter_view"
+        android:id="@+id/buffer_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

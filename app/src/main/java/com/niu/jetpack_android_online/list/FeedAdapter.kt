@@ -240,6 +240,12 @@ class FeedAdapter constructor(
                     setVisibility(true)
                     //widthPx: Int, heightPx: Int, coverUrl: String?, videoUrl: String, maxHeight: Int
                     bindData(width, height, cover, url, maxHeight)
+                    setListener(object : WrapperPlayerView.Listener {
+                        override fun onTogglePlay(attachView: WrapperPlayerView) {
+                            playDetector.togglePlay(attachView, url)
+                        }
+
+                    })
                 }
             }
         }
@@ -255,13 +261,11 @@ class FeedAdapter constructor(
         fun isVideo(): Boolean {
             return getItem(layoutPosition)?.itemType == TYPE_VIDEO
         }
-
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         playDetector = PagePlayDetector(pageName, lifecycleOwner, recyclerView)
-
     }
 
     override fun onViewAttachedToWindow(holder: FeedViewHolder) {

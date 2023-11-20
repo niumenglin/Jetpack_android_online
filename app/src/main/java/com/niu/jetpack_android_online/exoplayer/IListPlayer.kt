@@ -1,12 +1,10 @@
 package com.niu.jetpack_android_online.exoplayer
 
-import android.view.ViewGroup
-
 interface IListPlayer {
     /**
      * 获取当前视频播放器的exoPlayer(textureView)是否已经被挂载在某个容器上
      */
-    val attachedView: ViewGroup?
+    val attachedView: WrapperPlayerView?
 
     /**
      * 正在视频播放

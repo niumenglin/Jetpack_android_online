@@ -4,8 +4,10 @@ import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
+import kotlinx.coroutines.delay
 
 /**
  * 列表滑动后，自动播放检测器
@@ -16,40 +18,32 @@ class PagePlayDetector(
     private val listView: RecyclerView
 ) {
 
-    private val mDetectListeners: MutableList<IPlayDetector> = arrayListOf()
+    private val mDetectorListeners: MutableList<IPlayDetector> = arrayListOf()
     private val pageListPlayer = PageListPlayer.get(pageName)
-
-    init {
-        lifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
-            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                when (event) {
-                    Lifecycle.Event.ON_PAUSE -> pageListPlayer.inActive()
-                    Lifecycle.Event.ON_RESUME -> pageListPlayer.onActive()
-                    Lifecycle.Event.ON_DESTROY -> {
-                        mDetectListeners.clear()
-                        listView.removeOnScrollListener(scrollListener)
-                        listView.removeCallbacks(delayAutoPlayRunnable)
-                        pageListPlayer.stop(false)
-                    }
-
-                    else -> {}
-                }
+    private val dataChangeObserver = object : RecyclerView.AdapterDataObserver() {
+        override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+            lifecycleOwner.lifecycleScope.launchWhenStarted {
+                delay(500)
+                autoPlay()
             }
-        })
+        }
+    }
+    init {
+        listView.adapter?.registerAdapterDataObserver(dataChangeObserver)
     }
 
     fun addDetector(detector: IPlayDetector) {
-        mDetectListeners.add(detector)
+        mDetectorListeners.add(detector)
     }
 
     fun removeDetector(detector: IPlayDetector) {
-        mDetectListeners.remove(detector)
+        mDetectorListeners.remove(detector)
     }
 
     val scrollListener: OnScrollListener = object : OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             super.onScrollStateChanged(recyclerView, newState)
-            if (newState == SCROLL_STATE_IDLE) {//滑动结束
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {//滑动结束
                 autoPlay()
             }
         }
@@ -57,49 +51,41 @@ class PagePlayDetector(
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             if (dx == 0 && dy == 0) {
-                //意味着列表初始数据加载成功,当调用了 notifyItemRangeInsert之后，item 并没有立即被添加列表上
-                //当itemView 被真正布局到recyclerView之后，会触发onScrolled
+                // 意味着列表初始数据加载成功,当调用了notifyItemRangeInsert之后，item 并没有立即被添加到列表上
+                // 等itemView 被真正布局到recyclerview之后，会触发onScrolled
                 postAutoPlay()
             } else {
-                //滑动中需要检测，正在播放的item 是否已经滑出屏幕，如果滑出则停止它
-                if (pageListPlayer.isPlaying && isTargetInBounds(pageListPlayer.attachedView)) {
+                // 滑动中需要检测，正在播放的item 是否已经滑出屏幕，如果滑出则停止它
+                if (pageListPlayer.isPlaying && !isTargetInBounds(pageListPlayer.attachedView)) {
                     pageListPlayer.inActive()
                 }
             }
-
         }
+    }
+
+    init {
+        listView.addOnScrollListener(scrollListener)
+        lifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
+            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                when (event) {
+                    Lifecycle.Event.ON_PAUSE -> pageListPlayer.inActive()
+                    Lifecycle.Event.ON_RESUME -> autoPlay()
+                    Lifecycle.Event.ON_DESTROY -> {
+                        mDetectorListeners.clear()
+                        listView.removeOnScrollListener(scrollListener)
+                        listView.removeCallbacks(delayAutoPlayRunnable)
+                        pageListPlayer.stop(false)
+                        listView.adapter?.unregisterAdapterDataObserver(dataChangeObserver)
+                    }
+                    else -> {}
+                }
+            }
+        })
     }
 
     private val delayAutoPlayRunnable = Runnable { autoPlay() }
     private fun postAutoPlay() {
         listView.post(delayAutoPlayRunnable)
-    }
-
-    private fun autoPlay() {
-        if (listView.childCount <= 0 || mDetectListeners.size <= 0) {
-            return
-        }
-
-        //是否有正在播放的 item，并且还在屏幕内
-        if (pageListPlayer.isPlaying && isTargetInBounds(pageListPlayer.attachedView)) {
-            return
-        }
-
-        var attachedViewListener: IPlayDetector? = null
-        for (listener in mDetectListeners) {
-            val inBounds = isTargetInBounds(listener.getAttachView())
-            if (inBounds) {
-                attachedViewListener = listener
-                break
-            }
-        }
-        attachedViewListener?.run {
-            togglePlay(this.getAttachView(), this.getVideoUrl())
-        }
-    }
-
-    private fun togglePlay(attachView: WrapperPlayerView, videoUrl: String) {
-        pageListPlayer.togglePlay(attachView, videoUrl)
     }
 
     /**
@@ -134,6 +120,33 @@ class PagePlayDetector(
             rvLocation = Pair(location[1], location[1] + listView.height)
 
         }
+    }
+
+    private fun autoPlay() {
+        if (mDetectorListeners.size <= 0 || listView.childCount <= 0) {
+            return
+        }
+
+        //是否有正在播放的 item，并且还在屏幕内
+        if (pageListPlayer.isPlaying && isTargetInBounds(pageListPlayer.attachedView)) {
+            return
+        }
+
+        var attachedViewListener: IPlayDetector? = null
+        for (listener in mDetectorListeners) {
+            val inBounds = isTargetInBounds(listener.getAttachView())
+            if (inBounds) {
+                attachedViewListener = listener
+                break
+            }
+        }
+        attachedViewListener?.run {
+            togglePlay(this.getAttachView(), this.getVideoUrl())
+        }
+    }
+
+    fun togglePlay(attachView: WrapperPlayerView, videoUrl: String) {
+        pageListPlayer.togglePlay(attachView, videoUrl)
     }
 
     interface IPlayDetector {

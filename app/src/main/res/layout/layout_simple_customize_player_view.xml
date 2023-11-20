@@ -9,7 +9,7 @@
         android:layout_gravity="center">
 
 
-      <!--video surface will be insert as the first child of the viewGroup-->
+        <!--video surface will be insert as the first child of the viewGroup-->
     </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
 
 

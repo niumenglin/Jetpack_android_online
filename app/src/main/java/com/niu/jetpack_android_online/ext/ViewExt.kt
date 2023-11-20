@@ -66,8 +66,8 @@ fun ImageView.load(imageUrl: String, callback: (Bitmap) -> Unit) {
 
 //高斯模糊-Glide
 fun ImageView.setBlurImageUrl(blurUrl: String, radius: Int) {
-    Glide.with(this).load(blurUrl).override(radius).transform(BlurTransformation()).dontTransform()
-        .into(object : DrawableImageViewTarget(this) {
+    Glide.with(this).load(blurUrl).override(radius)
+        .transform(BlurTransformation()).dontAnimate().into(object : DrawableImageViewTarget(this) {
             override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
                 super.onResourceReady(resource, transition)
                 background = resource
