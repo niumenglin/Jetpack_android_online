@@ -63,6 +63,9 @@ dependencyResolutionManagement {
             library('exoplayer-ui', 'com.google.android.exoplayer', 'exoplayer-ui').version('2.18.5')
             bundle('exoplayer', ['exoplayer-core', 'exoplayer-ui'])
 
+            //qq_open_sdk
+            library('qqopensdk', 'com.tencent.tauth', 'qqopensdk').version('3.52.0')
+
             //nav-plugin
             library('asm','org.ow2.asm','asm').version('9.2')
             library('asm-tree','org.ow2.asm','asm-tree').version('9.2')
