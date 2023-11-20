@@ -68,6 +68,7 @@ class LoginActivity : BaseActivity<ActivityLayoutLoginBinding>() {
                 .saveUser(nickname, avatar, tencent.openId, tencent.expiresIn)
             if (apiResult.success && apiResult.body != null) {
                 //关闭当前登录页面
+                UserManager.save(apiResult.body!!)
                 finish()
             } else {
                 //切换到主线程

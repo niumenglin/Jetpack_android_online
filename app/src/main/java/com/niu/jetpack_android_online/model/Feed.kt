@@ -52,7 +52,9 @@ data class Author(
     val topCount: Int,
     @PrimaryKey(autoGenerate = false)
     val userId: Long
-)
+) {
+    constructor() : this("", 0, "", 0, 0, 0, 0, 0, false, 0, 0, "", "", 0, 0, 0)
+}
 
 @Keep
 data class TopComment(
