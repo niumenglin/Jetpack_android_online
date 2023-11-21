@@ -262,7 +262,7 @@ class FeedAdapter constructor(
                 )
 
                 val likeStateColor =
-                    ColorStateList.valueOf(context.getColor(if (hasLiked) R.color.color_theme_10 else R.color.color_3d3))
+                    ColorStateList.valueOf(context.getColor(if (hasLiked) R.color.color_theme else R.color.color_3d3))
                 feedInteractionBinding.interactionLike.iconTint = likeStateColor
                 feedInteractionBinding.interactionLike.setTextColor(likeStateColor)
 
@@ -273,7 +273,7 @@ class FeedAdapter constructor(
                 )
 
                 val dissStateColor =
-                    ColorStateList.valueOf(context.getColor(if (hasdiss) R.color.color_theme_10 else R.color.color_3d3))
+                    ColorStateList.valueOf(context.getColor(if (hasdiss) R.color.color_theme else R.color.color_3d3))
                 feedInteractionBinding.interactionDiss.iconTint = dissStateColor
                 feedInteractionBinding.interactionDiss.setTextColor(dissStateColor)
 
@@ -327,7 +327,7 @@ class FeedAdapter constructor(
         }
 
         override fun getVideoUrl(): String {
-            return getItem(layoutPosition)?.url!!
+            return getItem(layoutPosition)?.url?:""
         }
 
         fun isVideo(): Boolean {

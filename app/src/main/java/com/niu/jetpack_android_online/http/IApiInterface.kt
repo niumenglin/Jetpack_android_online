@@ -35,7 +35,7 @@ interface IApiInterface {
     suspend fun saveUser(
         @Query("name") name: String,
         @Query("avatar") avatar: String,
-        @Query("qq0openId") qqOpenId: String,
+        @Query("qqOpenId") qqOpenId: String,
         @Query("expires_time") expires_time: Long
     ): ApiResult<Author>
 
