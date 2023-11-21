@@ -2,6 +2,7 @@ package com.niu.jetpack_android_online.pages.login
 
 import android.content.Intent
 import com.niu.jetpack_android_online.cache.CacheManager
+import com.niu.jetpack_android_online.ext.startActivity
 import com.niu.jetpack_android_online.model.Author
 import com.niu.jetpack_android_online.utils.AppGlobals
 import kotlinx.coroutines.flow.Flow
@@ -23,9 +24,13 @@ object UserManager {
         if (isLogin()) {
             return
         }
-        val intent = Intent(AppGlobals.getApplication(), LoginActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        AppGlobals.getApplication().startActivity(intent)
+//        val intent = Intent(AppGlobals.getApplication(), LoginActivity::class.java)
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//        AppGlobals.getApplication().startActivity(intent)
+
+        startActivity<LoginActivity> {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
     }
 
     suspend fun getUser(): Flow<Author> {
