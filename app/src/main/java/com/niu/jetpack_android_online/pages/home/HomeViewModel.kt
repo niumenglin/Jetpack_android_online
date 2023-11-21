@@ -10,6 +10,7 @@ import androidx.paging.cachedIn
 import com.niu.jetpack_android_online.http.ApiResult
 import com.niu.jetpack_android_online.http.ApiService
 import com.niu.jetpack_android_online.model.Feed
+import com.niu.jetpack_android_online.pages.login.UserManager
 import java.lang.RuntimeException
 
 class HomeViewModel : ViewModel() {
@@ -36,7 +37,14 @@ class HomeViewModel : ViewModel() {
 
         override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Feed> {
             val result = kotlin.runCatching {
-                ApiService.getService().getFeeds(feedId = params.key ?: 0L, feedType = feedType)
+                ApiService.getService().getFeeds(
+                    feedId = params.key ?: 0L,
+                    feedType = feedType,
+                    userId = UserManager.userId()
+                )
+            }
+            if (result.isFailure) {
+                result.exceptionOrNull()?.printStackTrace()
             }
             val apiResult = result.getOrDefault(ApiResult())
             if (apiResult.success && apiResult.body?.isNotEmpty() == true) {

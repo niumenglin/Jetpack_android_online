@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagingDataAdapter
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DiffUtil
@@ -27,8 +28,10 @@ import com.niu.jetpack_android_online.ext.load
 import com.niu.jetpack_android_online.ext.setIconResource
 import com.niu.jetpack_android_online.ext.setImageResource
 import com.niu.jetpack_android_online.ext.setImageUrl
+import com.niu.jetpack_android_online.ext.setTextColor
 import com.niu.jetpack_android_online.ext.setTextVisibility
 import com.niu.jetpack_android_online.ext.setVisibility
+import com.niu.jetpack_android_online.http.ApiService
 import com.niu.jetpack_android_online.model.Author
 import com.niu.jetpack_android_online.model.Feed
 import com.niu.jetpack_android_online.model.TYPE_IMAGE_TEXT
@@ -36,8 +39,10 @@ import com.niu.jetpack_android_online.model.TYPE_TEXT
 import com.niu.jetpack_android_online.model.TYPE_VIDEO
 import com.niu.jetpack_android_online.model.TopComment
 import com.niu.jetpack_android_online.model.Ugc
+import com.niu.jetpack_android_online.pages.login.UserManager
 import com.niu.jetpack_android_online.utils.PixUtil
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -60,6 +65,24 @@ class FeedAdapter constructor(
     override fun getItemViewType(position: Int): Int {
         val feedItem = getItem(position) ?: return 0
         return feedItem.itemType
+    }
+
+    override fun onBindViewHolder(
+        holder: FeedViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isEmpty()) {
+            //全量更新
+            super.onBindViewHolder(holder, position, payloads)
+            return
+        }
+        if (payloads[0] is Ugc) {
+            //增量更新
+            holder.bindInteraction(payloads[0] as Ugc, getItem(position)!!.itemId)
+        } else if (payloads[0] is TopComment) {
+            holder.bindTopComment(payloads[0] as TopComment)
+        }
     }
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
@@ -85,7 +108,7 @@ class FeedAdapter constructor(
 
         holder.bindLabel(feedItem.activityText)
         holder.bindTopComment(feedItem.topComment)
-        holder.bindInteraction(feedItem.ugc)
+        holder.bindInteraction(feedItem.getUgcOrDefault(), feedItem.itemId)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
@@ -95,7 +118,7 @@ class FeedAdapter constructor(
             return FeedViewHolder(view)
         }
         val layoutResId =
-            if (viewType == TYPE_IMAGE_TEXT||viewType == TYPE_TEXT) R.layout.layout_feed_type_image else R.layout.layout_feed_type_video
+            if (viewType == TYPE_IMAGE_TEXT || viewType == TYPE_TEXT) R.layout.layout_feed_type_image else R.layout.layout_feed_type_video
         return FeedViewHolder(
             LayoutInflater.from(parent.context).inflate(layoutResId, parent, false)
         )
@@ -194,18 +217,42 @@ class FeedAdapter constructor(
                 feedTopCommentBinding.commentAuthor.setTextVisibility(author?.name)
                 feedTopCommentBinding.commentAvatar.setImageUrl(author?.avatar, true)
                 feedTopCommentBinding.commentText.setTextVisibility(commentText)
-                feedTopCommentBinding.commentLikeCount.setTextVisibility(commentCount.toString())
+                feedTopCommentBinding.commentLikeCount.setTextVisibility(this.getUgcOrDefault().likeCount.toString())
                 feedTopCommentBinding.commentPreviewVideoPlay.setVisibility(videoUrl != null)
+                feedTopCommentBinding.commentLikeCount.setTextColor(
+                    this.getUgcOrDefault().hasLiked,
+                    R.color.color_theme,
+                    R.color.color_3d3
+                )
                 feedTopCommentBinding.commentLikeStatus.setImageResource(
-                    hasLiked,
+                    this.getUgcOrDefault().hasLiked,
                     R.drawable.icon_cell_liked,
                     R.drawable.icon_cell_like
                 )
+
+                feedTopCommentBinding.commentLikeStatus.setOnClickListener {
+                    lifecycleOwner.lifecycleScope.launch {
+                        UserManager.loginIfNeed()
+                        //监听登录结果
+                        UserManager.getUser().collectLatest {
+                            val apiResult = ApiService.getService()
+                                .toggleCommentLike(commentId, itemId, it.userId)
+                            apiResult.body?.run {
+//                                val topComment = snapshot().items[layoutPosition].topComment!!
+                                val ugc = topComment.getUgcOrDefault()
+                                ugc.hasLiked = this.getAsJsonPrimitive("hasLiked").asBoolean
+                                ugc.likeCount = this.getAsJsonPrimitive("likeCount").asInt
+                                notifyItemChanged(layoutPosition, topComment)
+                            }
+                        }
+
+                    }
+                }
             }
         }
 
-        fun bindInteraction(ugc: Ugc?) {
-            ugc?.run {
+        fun bindInteraction(ugc: Ugc, itemId: Long) {
+            ugc.run {
                 val context = itemView.context
                 feedInteractionBinding.interactionLike.text = likeCount.toString()
                 feedInteractionBinding.interactionLike.setIconResource(
@@ -232,6 +279,30 @@ class FeedAdapter constructor(
 
                 feedInteractionBinding.interactionComment.text = commentCount.toString()
                 feedInteractionBinding.interactionShare.text = shareCount.toString()
+            }
+            feedInteractionBinding.interactionLike.setOnClickListener {
+                toggleFeedLike(itemId, true)
+            }
+            feedInteractionBinding.interactionDiss.setOnClickListener {
+                toggleFeedLike(itemId, false)
+            }
+        }
+
+        private fun toggleFeedLike(itemId: Long, like: Boolean) {
+            lifecycleOwner.lifecycleScope.launch {
+                UserManager.loginIfNeed()
+                UserManager.getUser().collectLatest {
+                    val apiResult =
+                        if (like) ApiService.getService().toggleFeedLike(itemId = itemId, it.userId)
+                        else ApiService.getService().toggleDissFeed(itemId = itemId, it.userId)
+                    apiResult.body?.run {
+                        val ugc = snapshot().items[layoutPosition].getUgcOrDefault()
+                        ugc.hasLiked = this.getAsJsonPrimitive("hasLiked").asBoolean
+                        ugc.hasdiss = this.getAsJsonPrimitive("hasdiss").asBoolean
+                        ugc.likeCount = this.getAsJsonPrimitive("likeCount").asInt
+                        notifyItemChanged(layoutPosition, ugc)
+                    }
+                }
             }
         }
 

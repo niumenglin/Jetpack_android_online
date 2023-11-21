@@ -24,11 +24,18 @@ data class Feed(
     val itemId: Long,
     val itemType: Int,
     val topComment: TopComment?,
-    val ugc: Ugc?,
+    var ugc: Ugc?,
     val url: String?,
     val width: Int
 ) {
     var backgroundColor: Int = 0
+
+    fun getUgcOrDefault(): Ugc {
+        if (ugc == null) {
+            ugc = Ugc()
+        }
+        return ugc!!
+    }
 }
 
 @Entity(tableName = "author")
@@ -37,7 +44,7 @@ data class Author(
     val avatar: String,
     val commentCount: Int,
     val description: String?,
-    val expiresTime: Int,
+    val expiresTime: Long,
     val favoriteCount: Int,
     val feedCount: Int,
     val followCount: Int,
@@ -61,11 +68,9 @@ data class TopComment(
     val author: Author?,
     val commentId: Long,
     val commentText: String,//评论的正文
-    val commentCount: Int,//评论数
     val commentType: Int,
-    val commentUgc: Ugc?,
+    var commentUgc: Ugc?,
     val createTime: Long,
-    val hasLiked: Boolean,
     val height: Int,
     val id: Int,
     val imageUrl: String?,
@@ -73,15 +78,24 @@ data class TopComment(
     val userId: Long,
     val videoUrl: String?,
     val width: Int
-)
+) {
+    fun getUgcOrDefault(): Ugc {
+        if (commentUgc == null) {
+            commentUgc = Ugc()
+        }
+        return commentUgc!!
+    }
+}
 
 @Keep
 data class Ugc(
-    val commentCount: Int,
-    val hasFavorite: Boolean,
-    val hasLiked: Boolean,
-    val hasdiss: Boolean,
-    val itemId: Long,
-    val likeCount: Int,
-    val shareCount: Int
-)
+    var commentCount: Int,
+    var hasFavorite: Boolean,
+    var hasLiked: Boolean,
+    var hasdiss: Boolean,
+    var itemId: Long,
+    var likeCount: Int,
+    var shareCount: Int
+) {
+    constructor() : this(0, false, false, false, 0, 0, 0)
+}

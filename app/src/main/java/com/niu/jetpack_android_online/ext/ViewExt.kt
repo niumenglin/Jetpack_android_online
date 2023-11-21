@@ -31,6 +31,10 @@ fun TextView.setTextVisibility(content: String?, goneWhenNull: Boolean = true) {
     text = content
 }
 
+fun TextView.setTextColor(condition: Boolean, trueRes: Int, falseRes: Int) {
+    this.setTextColor(context.getColor(if (condition) trueRes else falseRes))
+}
+
 fun ImageView.setImageResource(condition: Boolean, trueRes: Int, falseRes: Int) {
     setImageResource(if (condition) trueRes else falseRes)
 }

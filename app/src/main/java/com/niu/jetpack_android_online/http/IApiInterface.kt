@@ -21,7 +21,7 @@ interface IApiInterface {
         @Query("feedId") feedId: Long = 0,
         @Query("feedType") feedType: String = "all",
         @Query("pageCount") pageCount: Int = 10,
-        @Query("userId") userId: Int = 0
+        @Query("userId") userId: Long = 0L
     ): ApiResult<List<Feed>>
 
     /**
@@ -38,5 +38,38 @@ interface IApiInterface {
         @Query("qq0openId") qqOpenId: String,
         @Query("expires_time") expires_time: Long
     ): ApiResult<Author>
+
+    /**
+     * 对一个帖子的喜欢 或 取消喜欢
+     * @param itemId 帖子的id
+     * @param userId 当前登陆者的id
+     */
+    @GET("ugc/toggleFeedLike")
+    suspend fun toggleFeedLike(
+        @Query("itemId") itemId: Long, @Query("userId") userId: Long,
+    ): ApiResult<JsonObject>
+
+    /**
+     * 对一个帖子的踩 或 取消踩
+     * @param itemId 帖子的id
+     * @param userId 当前登陆者的id
+     */
+    @GET("ugc/dissFeed/")
+    suspend fun toggleDissFeed(
+        @Query("itemId") itemId: Long, @Query("userId") userId: Long,
+    ): ApiResult<JsonObject>
+
+    /**
+     * 对一个帖子的评论进行点赞 或 取消点赞
+     * @param commentId 评论的id
+     * @param itemId 帖子的id
+     * @param userId 当前登陆者的id
+     */
+    @GET("ugc/toggleCommentLike/")
+    suspend fun toggleCommentLike(
+        @Query("commentId") commentId: Long,
+        @Query("itemId") itemId: Long,
+        @Query("userId") userId: Long,
+    ): ApiResult<JsonObject>
 
 }

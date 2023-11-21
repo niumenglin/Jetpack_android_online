@@ -4,6 +4,7 @@ import android.content.Intent
 import com.niu.jetpack_android_online.cache.CacheManager
 import com.niu.jetpack_android_online.model.Author
 import com.niu.jetpack_android_online.utils.AppGlobals
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 object UserManager {
@@ -27,9 +28,9 @@ object UserManager {
         AppGlobals.getApplication().startActivity(intent)
     }
 
-    suspend fun getUser(): Author {
+    suspend fun getUser(): Flow<Author> {
         loadCache()
-        return userFlow.value
+        return userFlow
     }
 
     suspend fun userId():Long{
