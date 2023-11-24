@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -33,5 +34,13 @@
         app:indicatorColor="@color/color_theme"
         app:indicatorSize="@dimen/dp_100"
         app:trackThickness="@dimen/dp_6" />
+
+    <View
+        android:id="@+id/focus_point"
+        android:layout_width="@dimen/dp_64"
+        android:layout_height="@dimen/dp_64"
+        android:background="@drawable/capture_focus_drawable"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 </FrameLayout>
