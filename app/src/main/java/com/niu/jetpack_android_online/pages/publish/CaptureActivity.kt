@@ -3,9 +3,14 @@ package com.niu.jetpack_android_online.pages.publish
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.ContentValues
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Vibrator
+import android.provider.MediaStore
+import android.util.Log
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
@@ -14,12 +19,17 @@ import com.niu.jetpack.plugin.runtime.NavDestination
 import com.niu.jetpack_android_online.R
 import com.niu.jetpack_android_online.base.BaseActivity
 import com.niu.jetpack_android_online.databinding.ActivityLayoutCaptureBinding
+import com.niu.jetpack_android_online.utils.showToast
 import java.lang.Exception
 import java.lang.IllegalStateException
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @SuppressLint("RestrictedApi")
 @NavDestination(route = "activity_capture", type = NavDestination.NavType.Activity)
 class CaptureActivity : BaseActivity<ActivityLayoutCaptureBinding>() {
+
+    private lateinit var imageCapture: ImageCapture
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,13 +97,67 @@ class CaptureActivity : BaseActivity<ActivityLayoutCaptureBinding>() {
                 .build().also {
                     it.setSurfaceProvider(binding.previewView.surfaceProvider)
                 }
+
+            // imageCapture 图片拍摄
+            val imageCapture = ImageCapture.Builder()
+                .setTargetRotation(displayRotation)
+                .build()
+            this.imageCapture = imageCapture
             try {
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(this,cameraSelector,preview)
+                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
+                bindUI()
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }, ContextCompat.getMainExecutor(this))
+    }
+
+    private fun bindUI() {
+        binding.recordView.setOnClickListener {
+            takePicture()
+        }
+    }
+
+    private fun takePicture() {
+        val vibrator = getSystemService(Vibrator::class.java) as Vibrator
+        vibrator.vibrate(200)
+
+        // 文件名
+        val fileName = SimpleDateFormat(FILENAME, Locale.CHINA).format(System.currentTimeMillis())
+        // 存放位置
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+            put(MediaStore.MediaColumns.MIME_TYPE, PHOTO_TYPE)
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                put(MediaStore.MediaColumns.RELATIVE_PATH, RELATIVE_PATH_PICTURE)
+            }
+        }
+
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(
+            contentResolver,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        ).build()
+
+        imageCapture.takePicture(outputOptions,ContextCompat.getMainExecutor(this),object :
+            ImageCapture.OnImageSavedCallback {
+            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                // 拍摄成功
+                val savedUri = outputFileResults.savedUri
+                Log.d(TAG,"onImageSaved capture success:${savedUri}")
+                onFileSaved(savedUri)
+            }
+
+            override fun onError(exception: ImageCaptureException) {
+                // 拍摄失败
+                exception.imageCaptureError.showToast()
+            }
+        })
+    }
+
+    private fun onFileSaved(savedUri: Uri?) {
+
     }
 
     companion object {
@@ -106,6 +170,14 @@ class CaptureActivity : BaseActivity<ActivityLayoutCaptureBinding>() {
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) Manifest.permission.WRITE_EXTERNAL_STORAGE else null
         ).filterNotNull().toTypedArray()
 
+        // 图片/视频文件名称，存放位置
+        private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-sss"
+        private const val PHOTO_TYPE = "image/jpeg"
+        private const val VIDEO_TYPE = "video/mp4"
+        private const val RELATIVE_PATH_PICTURE = "Pictures/Jetpack"
+        private const val RELATIVE_PATH_VIDEO = "Movies/Jetpack"
+
+        // request code
         private const val REQ_CAPTURE = 10001
         private const val PERMISSION_CODE = 1000
     }
