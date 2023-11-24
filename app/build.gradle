@@ -71,7 +71,11 @@ dependencies {
     // qq-open-sdk
     implementation androidxLibs.qqopensdk
 
+    // camerax
+    implementation androidxLibs.bundles.camerax
 
+    // gesture view
+    implementation androidxLibs.photoView
 
 //    implementation googleLibs.material
 

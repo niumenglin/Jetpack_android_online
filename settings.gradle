@@ -73,6 +73,17 @@ dependencyResolutionManagement {
             library('room-compiler','androidx.room','room-compiler').version(room_version)
             bundle('room', ['room-runtime', 'room-ktx'])
 
+            // camerax
+            def camerax_version="1.3.0-alpha04"
+            library('camera-core','androidx.camera','camera-core').version(camerax_version)
+            library('camera-camera2','androidx.camera','camera-camera2').version(camerax_version)
+            library('camera-lifecycle','androidx.camera','camera-lifecycle').version(camerax_version)
+            library('camera-view','androidx.camera','camera-view').version(camerax_version)
+            library('camera-extensions','androidx.camera','camera-extensions').version(camerax_version)
+            bundle('camerax',['camera-core','camera-camera2','camera-lifecycle','camera-view','camera-extensions'])
+
+            // gesture imageview
+            library('photoView','com.github.chrisbanes','PhotoView').version('2.3.0')
 
             //nav-plugin
             library('asm','org.ow2.asm','asm').version('9.2')
