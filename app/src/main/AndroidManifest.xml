@@ -18,7 +18,7 @@
 
     <!--android 9及以上 需要授权特定包名，才可以通过getQueryIntent查询应用是否已安装-->
     <queries>
-        <package android:name="com.tencent.mobileqq"/>
+        <package android:name="com.tencent.mobileqq" />
     </queries>
 
     <application
@@ -44,15 +44,19 @@
         </activity>
 
         <!-- 这是是QQ快捷登录SDK 里面包含但没用的apache的类，需要在这里通过uses-library -->
-        <uses-library android:name="org.apache.http.legacy"
-            android:required="false"/>
-        <activity android:name="com.tencent.tauth.AuthActivity"
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:noHistory="true"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- tencent你的AppId  tencent后面的数字为应用appid，需替换成你自己的   -->
@@ -67,6 +71,17 @@
 
         <activity
             android:name=".pages.login.LoginActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".pages.publish.PublishActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".pages.publish.CaptureActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/fullScreen" />
+        <activity
+            android:name=".pages.publish.PreviewActivity"
             android:screenOrientation="portrait" />
 
     </application>

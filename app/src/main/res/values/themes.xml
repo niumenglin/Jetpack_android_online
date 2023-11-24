@@ -15,4 +15,13 @@
         <item name="android:listDivider">@drawable/list_divider</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="fullScreen" parent="Theme.APP">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="preview" parent="fullScreen">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@color/black</item>
+    </style>
 </resources>

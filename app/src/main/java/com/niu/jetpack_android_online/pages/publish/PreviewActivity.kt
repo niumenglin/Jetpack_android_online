@@ -1,4 +1,6 @@
 package com.niu.jetpack_android_online.pages.publish
 
-class PreviewActivity {
+import androidx.appcompat.app.AppCompatActivity
+
+class PreviewActivity : AppCompatActivity() {
 }

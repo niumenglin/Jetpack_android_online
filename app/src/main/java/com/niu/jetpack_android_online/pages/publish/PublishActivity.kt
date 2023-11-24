@@ -1,4 +1,6 @@
 package com.niu.jetpack_android_online.pages.publish
 
-class PublishActivity {
+import androidx.appcompat.app.AppCompatActivity
+
+class PublishActivity :AppCompatActivity() {
 }
