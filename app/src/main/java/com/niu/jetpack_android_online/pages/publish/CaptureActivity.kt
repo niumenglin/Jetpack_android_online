@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.Vibrator
 import android.provider.MediaStore
 import android.util.Log
+import android.util.Size
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
@@ -101,6 +102,14 @@ class CaptureActivity : BaseActivity<ActivityLayoutCaptureBinding>() {
             // imageCapture 图片拍摄
             val imageCapture = ImageCapture.Builder()
                 .setTargetRotation(displayRotation)
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)//优化图片质量，压缩
+//                .setTargetRotation(16/9)// 设置期望的宽高比 16:9, 4:3
+                .setJpegQuality(90)// 设置期望的图片质量0-100
+                // 设置期望的的最大的分辨率，拍摄出来的图片分辨率不会高于1080,1920
+                // 和setTargetAspectRatio不能同时设置，只能二选一
+                .setResolutionSelector(
+                    ResolutionSelector.Builder().setMaxResolution(Size(1920, 1080)).build()
+                )
                 .build()
             this.imageCapture = imageCapture
             try {
